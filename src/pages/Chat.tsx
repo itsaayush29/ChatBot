@@ -78,7 +78,27 @@ const Chat = () => {
   };
 
   const sendMessage = async () => {
-    if (!input.trim() || !conversationId || !user) return;
+    console.log('sendMessage called', { input, conversationId, user: !!user });
+    
+    if (!input.trim()) {
+      console.log('No input');
+      return;
+    }
+    
+    if (!conversationId) {
+      console.log('No conversationId');
+      toast({
+        title: 'Error',
+        description: 'No conversation found. Please refresh the page.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
+    if (!user) {
+      console.log('No user');
+      return;
+    }
 
     const userMessage = input.trim();
     setInput('');
@@ -97,10 +117,13 @@ const Chat = () => {
     await saveMessage('user', userMessage);
 
     try {
+      console.log('Calling chat function...');
       // Call the chat edge function
       const { data, error } = await supabase.functions.invoke('chat', {
         body: { message: userMessage, conversationId },
       });
+
+      console.log('Chat function response:', { data, error });
 
       if (error) throw error;
 
