@@ -21,13 +21,15 @@ const Chat = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    createNewConversation();
-  }, []);
+    if (!authLoading && user && !conversationId) {
+      createNewConversation();
+    }
+  }, [authLoading, user, conversationId]);
 
   useEffect(() => {
     scrollToBottom();
