@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Send, Bot, User as UserIcon, Loader2 } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -24,12 +25,39 @@ const Chat = () => {
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { id } = useParams<{ id?: string }>();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!authLoading && user && !conversationId) {
+    if (authLoading || !user) return;
+
+    const loadConversation = async (convId: string) => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('conversation_id', convId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading messages:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load conversation messages',
+          variant: 'destructive',
+        });
+      } else {
+        setMessages(data as Message[]);
+      }
+    };
+
+    if (id) {
+      setConversationId(id);
+      loadConversation(id);
+    } else if (!conversationId) {
       createNewConversation();
     }
-  }, [authLoading, user, conversationId]);
+  }, [authLoading, user, id]);
 
   useEffect(() => {
     scrollToBottom();
@@ -61,6 +89,7 @@ const Chat = () => {
     } else {
       setConversationId(data.id);
       setMessages([]);
+      navigate(`/chat/${data.id}`);
     }
   };
 
