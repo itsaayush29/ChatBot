@@ -52,9 +52,16 @@ const Chat = () => {
     };
 
     if (id) {
-      setConversationId(id);
-      loadConversation(id);
-    } else if (!conversationId) {
+      // Loading an existing conversation
+      if (conversationId !== id) {
+        setConversationId(id);
+        loadConversation(id);
+      }
+    } else {
+      // No id means we want a new conversation
+      // Reset state and create new
+      setConversationId(null);
+      setMessages([]);
       createNewConversation();
     }
   }, [authLoading, user, id]);
