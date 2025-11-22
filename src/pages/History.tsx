@@ -118,7 +118,11 @@ const History = () => {
                 </Card>
               ) : (
                 conversations.map((conversation) => (
-                  <Card key={conversation.id} className="hover:shadow-elevated transition-shadow">
+                  <Card
+                    key={conversation.id}
+                    className="hover:shadow-elevated transition-shadow cursor-pointer"
+                    onClick={() => navigate(`/chat/${conversation.id}`)}
+                  >
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
