@@ -134,11 +134,16 @@ const History = () => {
                         </div>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-destructive hover:text-destructive"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent onClick={(e) => e.stopPropagation()}>
                             <AlertDialogHeader>
                               <AlertDialogTitle>Delete Conversation?</AlertDialogTitle>
                               <AlertDialogDescription>
@@ -149,7 +154,10 @@ const History = () => {
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => deleteConversation(conversation.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteConversation(conversation.id);
+                                }}
                                 className="bg-destructive hover:bg-destructive/90"
                               >
                                 Delete
